@@ -171,7 +171,7 @@ const comprobarUsuario = (req, res, next) => {
   };
   
 
-app.get("/", async (req, res) => {
+app.get("/",comprobarUsuario, async (req, res) => {
 
     let usuario = await Usuario.findByPk(req.session.usuario.id);
 
