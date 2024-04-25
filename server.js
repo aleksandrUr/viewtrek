@@ -738,7 +738,7 @@ app.post("/darLike", formdata.none(), darLike)
 app.post("/comentar", formdata.none(), comentar)
 
 
-app.listen(3000, "192.168.1.136", () => {
+app.listen(3000, () => {
 
     console.log("corriendo");
 
