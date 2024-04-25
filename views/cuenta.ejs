@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/css/index.css">
+</head>
+
+<body>
+
+    <div id="index">
+        <%- include("aside.ejs") %>
+            <div id="central">
+                <img id="banner" onclick="fb=null; document.getElementById('fileInput').click()"
+                    src="data:image/jpeg;base64, <%= banner %>" alt="Imagen">
+
+
+                <div id="datos">
+                    <input type="file" hidden id="fileInput" onchange="cambiarFoto(event)">
+                    <div id="perfil">
+
+                        <img id="fotoPerfil" onclick="fb='f'; document.getElementById('fileInput').click()"
+                            src="data:image/jpeg;base64, <%= foto %>" alt="Imagen">
+
+
+                        <div id="datos">
+                            <h2>
+                                <%= usuario.nombre %>
+                            </h2>
+                            <p>
+                                <%= usuario.email %>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <button class="enviarVideo"><a href="/publicar">publicar video</a></button>
+                <div id="videosCreados">
+                    <% for(video of videos){ %>
+                        <form action=<%="/videos/" + video.id %> class="video">
+                            <button type="submit">
+                                <img src="data:image/jpeg;base64,<%= video.portada  %>">
+                                <p><b>
+                                        <%= video.titulo %>
+                                    </b></p>
+                                <div class="tiempo"><svg width="20px" height="20px" viewBox="0 0 15 15" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" clip-rule="evenodd"
+                                            d="M7.50009 0.877014C3.84241 0.877014 0.877258 3.84216 0.877258 7.49984C0.877258 11.1575 3.8424 14.1227 7.50009 14.1227C11.1578 14.1227 14.1229 11.1575 14.1229 7.49984C14.1229 3.84216 11.1577 0.877014 7.50009 0.877014ZM1.82726 7.49984C1.82726 4.36683 4.36708 1.82701 7.50009 1.82701C10.6331 1.82701 13.1729 4.36683 13.1729 7.49984C13.1729 10.6328 10.6331 13.1727 7.50009 13.1727C4.36708 13.1727 1.82726 10.6328 1.82726 7.49984ZM8 4.50001C8 4.22387 7.77614 4.00001 7.5 4.00001C7.22386 4.00001 7 4.22387 7 4.50001V7.50001C7 7.63262 7.05268 7.7598 7.14645 7.85357L9.14645 9.85357C9.34171 10.0488 9.65829 10.0488 9.85355 9.85357C10.0488 9.65831 10.0488 9.34172 9.85355 9.14646L8 7.29291V4.50001Z"
+                                            fill="#000000" />
+                                    </svg>
+                                    <div>
+                                        <%= video.duracion %>
+                                    </div>
+                                </div>
+                                <div class="tiempo">
+                                    <svg fill="#000000" width="20px" height="20px" viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M18.54,9,8.88,3.46a3.42,3.42,0,0,0-5.13,3V17.58A3.42,3.42,0,0,0,7.17,21a3.43,3.43,0,0,0,1.71-.46L18.54,15a3.42,3.42,0,0,0,0-5.92Zm-1,4.19L7.88,18.81a1.44,1.44,0,0,1-1.42,0,1.42,1.42,0,0,1-.71-1.23V6.42a1.42,1.42,0,0,1,.71-1.23A1.51,1.51,0,0,1,7.17,5a1.54,1.54,0,0,1,.71.19l9.66,5.58a1.42,1.42,0,0,1,0,2.46Z" />
+                                    </svg>
+                                    <div>
+                                        <%= video.vistas %>
+                                    </div>
+                                </div>
+                            </button>
+                        </form>
+
+                        <% } %>
+                </div>
+
+            </div>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+
+            <script>
+
+                let fb = "";
+
+                function cambiarFoto(e) {
+
+                    let fotoP = null;
+
+                    if (fb == "f") {
+
+                        fotoP = document.getElementById("fotoPerfil")
+
+                    } else {
+
+                        fotoP = document.getElementById("banner")
+
+                    }
+
+
+                    console.log(fb)
+
+                    let req = new FormData();
+
+                    req.append("foto", e.target.files[0]);
+                    req.append("tipo", fb);
+
+                    gsap.to(fotoP, {
+
+                        opacity: 0,
+                        duration: 0.4,
+                        onComplete: function () {
+
+                            fetch('/ponerFoto', {
+                                method: 'POST',
+                                body: req // Aquí debes tener tu FormData con el archivo a subir
+                            })
+                                .then(response => response.json())
+                                .then(data => {
+
+                                    if (data.base64 != undefined) {
+
+                                        fotoP.src = "data:image/jpeg;base64," + data.base64;
+
+
+                                    } else {
+
+                                        if (document.querySelector(".advertencia") == null) {
+
+
+                                            let advertencia = document.createElement("div")
+                                            advertencia.textContent = "Solo imagenes"
+                                            advertencia.classList.add("advertencia")
+                                            document.body.appendChild(advertencia)
+
+                                            gsap.fromTo(advertencia, {
+
+                                                position: "absolute",
+                                                left: window.innerWidth / 2 + "px",
+                                                top: "-60px"
+
+
+                                            }, {
+
+                                                duration: 1,
+                                                y: 80,
+                                                yoyo: true,
+                                                repeat: 1,
+                                                repeatDelay: 5,
+                                                onComplete: function () {
+
+                                                    advertencia.remove()
+
+                                                }
+
+                                            })
+
+                                        } else {
+                                            console.log("advertencia salida")
+                                        }
+                                    }
+
+                                    gsap.to(fotoP, {
+                                        opacity: 1,
+                                        duration: 0.4
+                                    })
+                                })
+                        }
+                    })
+                }
+
+            </script>
+
+</body>
+
+</html>

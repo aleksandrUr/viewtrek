@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Formulario con CSS Bonito</title>
+    <link rel="stylesheet" href="/css/index.css">
+</head>
+
+<body>
+    <div class="formulario-container">
+        <h2>Login</h2>
+        <form action="/login" method="post">
+            <div class="campo">
+                <label for="nombreUsuario">Nombre de Usuario</label>
+                <input type="text" id="nombreUsuario" name="nombre" required>
+            </div>
+            <div class="campo">
+                <label for="contrasena">Contraseña</label>
+                <input type="password" id="contrasena" name="contrasena" required>
+            </div>
+            <div class="campo">
+                <input type="submit" value="Logearse">
+            </div>
+            <a href="/formulario">No tienes cuenta?</a>
+        </form>
+    </div>
+
+    <% if (errorMessages && errorMessages.length> 0) { %>
+        <div class="mensaje" style="background-color:  <%= color %>;">
+            
+                <% errorMessages.forEach(message=> { %>
+                   
+                        <%= message %><br>
+                    
+                    <% }); %>
+            </ul>
+        </div>
+        <% } %>
+</body>
+
+</html>

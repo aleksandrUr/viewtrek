@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/css/index.css">
+</head>
+
+<body>
+    <div id="index">
+        <%- include("aside.ejs") %>
+            <div id="central">
+                <div id="nav-search">
+                    <div id="search">
+                        <input type="text">
+                        <div id="deleteSearch"><svg width="25px" height="25px" viewBox="0 0 24 24" id="Layer_1"
+                                data-name="Layer 1" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <style>
+                                        .cls-1 {
+                                            fill: none;
+                                            stroke: #020202;
+                                            stroke-miterlimit: 10;
+                                            stroke-width: 1.91px;
+                                        }
+                                    </style>
+                                </defs>
+                                <circle class="cls-1" cx="9.14" cy="9.14" r="7.64" />
+                                <line class="cls-1" x1="22.5" y1="22.5" x2="14.39" y2="14.39" />
+                            </svg></div>
+
+                    </div>
+                </div>
+                <form action="/publicar" id="subirVideo" method="post" enctype="multipart/form-data">
+                    <div class="informacionVideo">
+                        <textarea type="text" name="nombre" placeholder="Titulo"></textarea>
+                        <textarea type="text" name="descripcion" placeholder="Descripcion"></textarea>
+                        <textarea type="text" name="categorias" placeholder="Categorias, tienen que ir separados por una coma"></textarea>
+                        <label>
+                            <b>Miniatura</b>
+                            <input id="portada" type="file" name="portada" accept="image/*">
+                            <svg fill="#000000" width="200px" height="200px" viewBox="0 0 24 24" id="portadaSvg"
+                                data-name="Flat Line" xmlns="http://www.w3.org/2000/svg" class="icon flat-line">
+                                <path id="secondary"
+                                    d="M21,5V19a1,1,0,0,1-.29.71L14,13l-3,3L9,14,3.29,19.71A1,1,0,0,1,3,19V5A1,1,0,0,1,4,4H20A1,1,0,0,1,21,5Z"
+                                    style="fill: rgb(44, 169, 188); stroke-width: 2;"></path>
+                                <polyline id="primary" points="20.71 19.71 14 13 11 16 9 14 3.29 19.71"
+                                    style="fill: none; stroke: rgb(0, 0, 0); stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;">
+                                </polyline>
+                                <line id="primary-upstroke" x1="10.95" y1="9" x2="11.05" y2="9"
+                                    style="fill: none; stroke: rgb(0, 0, 0); stroke-linecap: round; stroke-linejoin: round; stroke-width: 2.5;">
+                                </line>
+                                <rect id="primary-2" data-name="primary" x="3" y="4" width="18" height="16" rx="1"
+                                    style="fill: none; stroke: rgb(0, 0, 0); stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;">
+                                </rect>
+                            </svg>
+                        </label>
+                        <input type="submit">
+                    </div>
+                    <label class="custom-file-input">
+                        <p style="text-align: center;"><b>Subir video:</b></p>
+                        <input type="file" id="fileVideo" name="videoUrl" accept="video/*">
+                        <svg id="carga" fill="#000000" width="400px" height="400px" viewBox="0 0 24 24" version="1.2"
+                            baseProfile="tiny" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M16.707 7.404c-.189-.188-.448-.283-.707-.283s-.518.095-.707.283l-2.293 2.293v-6.697c0-.552-.448-1-1-1s-1 .448-1 1v6.697l-2.293-2.293c-.189-.188-.44-.293-.707-.293s-.518.105-.707.293c-.39.39-.39 1.024 0 1.414l4.707 4.682 4.709-4.684c.388-.387.388-1.022-.002-1.412zM20.987 16c0-.105-.004-.211-.039-.316l-2-6c-.136-.409-.517-.684-.948-.684h-.219c-.094.188-.21.368-.367.525l-1.482 1.475h1.348l1.667 5h-13.893l1.667-5h1.348l-1.483-1.475c-.157-.157-.274-.337-.367-.525h-.219c-.431 0-.812.275-.948.684l-2 6c-.035.105-.039.211-.039.316-.013 0-.013 5-.013 5 0 .553.447 1 1 1h16c.553 0 1-.447 1-1 0 0 0-5-.013-5z" />
+                        </svg>
+
+                    </label>
+
+
+
+                </form>
+                <% if( errores.length> 0) {%>
+
+                    <div class="advertencia">
+                        <% for(error of errores){ %>
+                            <p>
+                                <%= error %>
+                            </p>
+                            <% } %>
+                    </div>
+                    <% } %>
+            </div>
+
+            <div id="chat"></div>
+    </div>
+    <script>
+
+        let minuatura = document.getElementById("portada");
+
+        minuatura.addEventListener("change", (e) => {
+
+            let archivo = e.target.files[0];
+
+            if (e.target.parentNode.children[2].tagName.toLowerCase() == "img") {
+
+                e.target.parentNode.children[2].remove()
+
+            }
+
+            let lector = new FileReader;
+
+            lector.readAsDataURL(archivo)
+
+            lector.addEventListener("load", (e) => {
+
+
+
+                let portadaSvg = document.getElementById("portadaSvg")
+
+                let canvas = document.getElementById("carga")
+
+                let base64 = e.target.result;
+
+                let img = new Image;
+                img.src = base64;
+                img.width = "200"
+                img.height = "200";
+                img.style.borderRadius = "10px"
+
+                minuatura.insertAdjacentElement("afterend", img)
+
+                portadaSvg.style.display = "none"
+
+            })
+
+
+        })
+
+        let fileVideo = document.getElementById("fileVideo");
+
+        fileVideo.addEventListener("change", (e) => {
+
+            let archivo = e.target.files[0];
+
+            if (e.target.parentNode.children[2].tagName.toLowerCase() == "video") {
+
+                e.target.parentNode.children[2].remove()
+
+            }
+
+
+            let lector = new FileReader;
+
+            lector.readAsArrayBuffer(archivo);
+
+            lector.addEventListener("load", (e) => {
+
+                let canvas = document.getElementById("carga")
+
+                let buffer = e.target.result;
+                let videoBlob = new Blob([new Uint8Array(buffer)], { type: 'video/mp4' });
+                let url = window.URL.createObjectURL(videoBlob);
+
+                let video = document.createElement("video");
+
+                video.style.width = "400px";
+                video.style.height = "400px";
+                video.style.backgroundColor = "black"
+
+                let source = document.createElement("source");
+                source.type = "video/mp4";
+                source.src = url
+
+                let cuadro = document.createElement("div")
+                cuadro.classList.add("borrarMuestra")
+
+                video.appendChild(source)
+                video.appendChild(cuadro)
+
+                canvas.insertAdjacentElement("afterend", video)
+                canvas.style.display = "none"
+                video.play()
+
+
+            })
+
+        })
+
+    </script>
+
+
+</body>
+
+</html>
